@@ -43,7 +43,7 @@ assign i_uart[4:0] = io_in[5:1];
 always @(posedge clk) begin
 
     counter <= counter + 1;
-    led[0] <= counter[20];
+    led[0] <= counter[25];
 
     case(mux)
       2'b00 : begin
