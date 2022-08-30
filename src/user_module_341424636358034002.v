@@ -14,7 +14,7 @@ wire clk;
 assign clk = io_in[0];
 wire [2:0] led;
 
-assign io_out[5] = led[0];
+assign io_out[0] = led[0];
 assign io_out[6] = led[1];
 assign io_out[7] = led[2];
 
@@ -32,31 +32,31 @@ wire [4:0] o_uart;
 assign i_uart = uart_rx;
 assign o_uart = uart_tx;
 
-assign io_out[4:0] = o_uart[4:0];
+assign io_out[5:1] = o_uart[4:0];
 assign i_uart[4:0] = io_in[5:1];
 
 always @(posedge clk) begin
 
     case(mux)
       2'b00 : begin
-                uart_rx[0] <= uart_tx[1];
-                uart_rx[1] <= uart_tx[0];
+                uart_tx[1] <= uart_rx[0];
+                uart_tx[0] <= uart_rx[1];
             end
       2'b01 : begin 
-                uart_rx[0] <= uart_tx[2];
-                uart_rx[2] <= uart_tx[0];
+                uart_tx[2] <= uart_rx[0];
+                uart_tx[0] <= uart_rx[2];
             end
       2'b10 : begin 
-                uart_rx[0] <= uart_tx[3];
-                uart_rx[3] <= uart_tx[0];
+                uart_tx[3] <= uart_rx[0];
+                uart_tx[0] <= uart_rx[3];
             end
       2'b11 : begin
-                uart_rx[0] <= uart_tx[4];
-                uart_rx[4] <= uart_tx[0];
+                uart_tx[4] <= uart_rx[0];
+                uart_tx[0] <= uart_rx[4];
             end
       default : begin 
-                uart_rx[0] <= uart_tx[1];
-                uart_rx[2] <= uart_tx[0];
+                uart_tx[1] <= uart_rx[0];
+                uart_tx[0] <= uart_rx[1];
                 end
     endcase
 end
