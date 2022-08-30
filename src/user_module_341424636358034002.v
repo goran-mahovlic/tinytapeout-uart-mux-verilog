@@ -9,14 +9,17 @@ module user_module_341424636358034002(
   output [7:0] io_out
 );
 
-  // using io_in[0] as clk
+// using io_in[0] as clk
 wire clk;
 assign clk = io_in[0];
-wire [2:0] led;
+reg [2:0] led;
+wire [2:0] led_out;
 
-assign io_out[0] = led[0];
-assign io_out[6] = led[1];
-assign io_out[7] = led[2];
+assign io_out[0] = led_out[0];
+assign io_out[6] = led_out[1];
+assign io_out[7] = led_out[2];
+
+assign led_out = led;
 
 wire [1:0] mux;
 
@@ -25,6 +28,8 @@ assign mux[1] = io_in[7];
 
 reg [4:0] uart_rx;
 reg [4:0] uart_tx;
+
+reg [24:0] counter;
 
 wire [4:0] i_uart;
 wire [4:0] o_uart;
@@ -37,26 +42,39 @@ assign i_uart[4:0] = io_in[5:1];
 
 always @(posedge clk) begin
 
+    counter <= counter + 1;
+    led[0] <= counter[20];
+
     case(mux)
       2'b00 : begin
                 uart_tx[1] <= uart_rx[0];
                 uart_tx[0] <= uart_rx[1];
+                led[1] <= uart_rx[1];
+                led[2] <= uart_tx[1];
             end
       2'b01 : begin 
                 uart_tx[2] <= uart_rx[0];
                 uart_tx[0] <= uart_rx[2];
+                led[1] <= uart_rx[2];
+                led[2] <= uart_tx[2];                
             end
       2'b10 : begin 
                 uart_tx[3] <= uart_rx[0];
                 uart_tx[0] <= uart_rx[3];
+                led[1] <= uart_rx[3];
+                led[2] <= uart_tx[3];
             end
       2'b11 : begin
                 uart_tx[4] <= uart_rx[0];
                 uart_tx[0] <= uart_rx[4];
+                led[1] <= uart_rx[4];
+                led[2] <= uart_tx[4];
             end
       default : begin 
                 uart_tx[1] <= uart_rx[0];
                 uart_tx[0] <= uart_rx[1];
+                led[1] <= uart_rx[1];
+                led[2] <= uart_tx[1];
                 end
     endcase
 end
