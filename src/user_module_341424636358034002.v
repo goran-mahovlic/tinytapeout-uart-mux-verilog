@@ -9,48 +9,73 @@ module user_module_341424636358034002(
   output [7:0] io_out
 );
 
-  wire pdm_out;
+  // using io_in[0] as clk
+  wire clk;
+  assign clk = io_in[0];
+  wire [2:0] led;
 
-  assign io_out[0] = pdm_out;
-  assign io_out[1] = ~pdm_out;
+  assign io_out[5] = led[0];
+  assign io_out[6] = led[1];
+  assign io_out[7] = led[2];
 
-  pdm_341424636358034002 pdm_core(
-    .pdm_input(io_in[7:3]),
-    .write_en(io_in[2]),
-    .reset(io_in[1]),
-    .clk(io_in[0]),    
-    .pdm_out(pdm_out)
-  );
+  wire uart_0_rx;
+  assign uart_0_rx = io_in[1];
+  wire uart_0_tx;
+  assign io_out[0] = uart_0_tx;
 
-endmodule
 
-//  Any submodules should be included in this file,
-//  so they are copied into the main TinyTapeout repo.
-//  Appending your ID to any submodules you create 
-//  ensures there are no clashes in full-chip simulation.
-module pdm_341424636358034002(
-    input [4:0] pdm_input,
-    input       write_en,
-    input       clk, reset,    
-    output      pdm_out
-);
+  wire uart_1_rx;
+  assign uart_1_rx = io_in[2];
+  wire uart_1_tx;
+  assign io_out[1] = uart_1_tx;
 
-reg [4:0] accumulator;
-reg [4:0] input_reg;
+  wire uart_2_rx;
+  assign uart_2_rx = io_in[3];  
+  wire uart_2_tx;
+  assign io_out[2] = uart_2_tx;
 
-wire [5:0] sum;
+  wire uart_3_rx;
+  assign uart_3_rx = io_in[4];
+  wire uart_3_tx;
+  assign io_out[3] = uart_3_tx;
 
-assign sum = input_reg + accumulator;
-assign pdm_out = sum[5];
+  wire uart_4_rx;
+  assign uart_4_rx = io_in[5];
+  wire uart_4_tx;
+  assign io_out[4] = uart_4_tx;
 
-always @(posedge clk or posedge reset) begin
-    if (reset) begin 
-        input_reg <= 5'h00 ;
-        accumulator <= 5'h00;
-    end else begin
-        accumulator <= sum[4:0];
-        if (write_en) input_reg <= pdm_input ;
-    end
-end
+  wire [1:0] mux;
 
+  assign mux[0] = io_in[6];
+  assign mux[1] = io_in[7];
+
+  
+//  always @(posedge clk) begin
+
+//    end
+
+    case(mux)
+      2'b00 : begin
+                uart_0_rx <= uart_1_tx;
+                uart_1_rx <= uart_0_tx;
+                end
+      2'b01 : begin 
+                uart_0_rx <= uart_2_tx;
+                uart_2_rx <= uart_0_tx;
+                end
+      2'b10 : begin 
+                uart_0_rx <= uart_3_tx;
+                uart_3_rx <= uart_0_tx;
+                end
+      2'b11 : begin
+                uart_0_rx <= uart_4_tx;
+                uart_4_rx <= uart_0_tx;
+                end
+
+      default : begin 
+                uart_0_rx <= uart_1_tx;
+                uart_1_rx <= uart_0_tx;
+                end
+    endcase
+  end
 endmodule
