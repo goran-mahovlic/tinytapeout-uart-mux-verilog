@@ -4,7 +4,7 @@
 //  The pin connections within the user_module are up to you,
 //  although (if one is present) it is recommended to place a clock on io_in[0].
 //  This allows use of the internal clock divider if you wish.
-module user_module_341154068332282450(
+module user_module_341424636358034002(
   input [7:0] io_in, 
   output [7:0] io_out
 );
@@ -14,7 +14,7 @@ module user_module_341154068332282450(
   assign io_out[0] = pdm_out;
   assign io_out[1] = ~pdm_out;
 
-  pdm_341154068332282450 pdm_core(
+  pdm_341424636358034002 pdm_core(
     .pdm_input(io_in[7:3]),
     .write_en(io_in[2]),
     .reset(io_in[1]),
@@ -28,7 +28,7 @@ endmodule
 //  so they are copied into the main TinyTapeout repo.
 //  Appending your ID to any submodules you create 
 //  ensures there are no clashes in full-chip simulation.
-module pdm_341154068332282450(
+module pdm_341424636358034002(
     input [4:0] pdm_input,
     input       write_en,
     input       clk, reset,    
